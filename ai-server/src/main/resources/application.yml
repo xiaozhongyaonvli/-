@@ -1,0 +1,42 @@
+server:
+  port: 8080
+
+spring:
+  profiles:
+    active: dev
+  datasource:
+    druid:
+      driver-class-name: ${ai.datasource.driver-class-name}
+      url: jdbc:mysql://${ai.datasource.host}:${ai.datasource.port}/${ai.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      username: ${ai.datasource.username}
+      password: ${ai.datasource.password}
+  redis:
+    host: ${ai.redis.host}
+    port: ${ai.redis.port}
+    password: ${ai.redis.password}
+    database: ${ai.redis.database}
+
+mybatis:
+  #mapper配置文件
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.ai.entity
+  configuration:
+    #开启驼峰命名
+    map-underscore-to-camel-case: true
+image:
+  localPath: ${ai.image.localPath}
+logging:
+  level:
+    com:
+      ai:
+        mapper: debug
+        service: debug
+        controller: debug
+debug: true
+jwt:
+  # 设置jwt签名加密时使用的秘钥
+  user-secret-key: ${ai.jwt.user-secret-key}
+  # 设置jwt过期时间
+  user-ttl: ${ai.jwt.user-ttl}
+  # 设置前端传递过来的令牌名称
+  user-token-name: ${ai.jwt.user-token-name}
