@@ -1,6 +1,9 @@
 package com.ai.service;
 import com.ai.dto.UserDTO;
 import com.ai.result.Result;
+
+import java.util.Map;
+
 public interface UserService {
     /**
      * 检查电话是否已经注册过
@@ -14,7 +17,7 @@ public interface UserService {
      * @param userDTO 用户提交信息
      * @return        TODO
      */
-    Result<UserDTO> register(UserDTO userDTO);
+    Result register(UserDTO userDTO);
 
     /**
      * 发送验证码
@@ -22,4 +25,11 @@ public interface UserService {
      * @return      TODO
      */
     Result sendVerifyCode(String phone);
+
+    /**
+     * 用户登录
+     * @param userDTO (手机号码+验证码  ||   手机号 + 密码)
+     * @return        200成功返回token
+     */
+    Result login(UserDTO userDTO);
 }

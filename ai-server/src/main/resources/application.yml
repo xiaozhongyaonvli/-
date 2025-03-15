@@ -15,7 +15,17 @@ spring:
     port: ${ai.redis.port}
     password: ${ai.redis.password}
     database: ${ai.redis.database}
+  servlet:
+    multipart:
+      max-file-size: ${ai.servlet.multipart.max-file-size}
+      max-request-size: ${ai.servlet.multipart.max-request-size}
 
+ali-oss:
+  access-key-secret: ${ai.ali-oss.access-key-secret}
+  access-key-id: ${ai.ali-oss.access-key-id}
+  bucket-name: ${ai.ali-oss.bucket-name}
+  end-point: ${ai.ali-oss.end-point}
+  region: ${ai.ali-oss.region}
 mybatis:
   #mapper配置文件
   mapper-locations: classpath:mapper/*.xml

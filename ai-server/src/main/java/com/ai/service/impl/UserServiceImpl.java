@@ -18,6 +18,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -106,6 +107,41 @@ public class UserServiceImpl implements UserService {
         hashMap.put("time", 0);
         redisTemplate.opsForHash().putAll(RedisConstant.PhoneCode + phone,hashMap);
         return Result.success();
+    }
+
+    /**
+     * 用户登录
+     * @param userDTO (手机号码+验证码  ||   手机号 + 密码)
+     * @return        200成功返回token
+     */
+    @Override
+    public Result login(UserDTO userDTO) {
+        User user = new User();
+        // 密码登录
+        if (userDTO.getIdentifyCode() == null){
+            String pwd = userDTO.getPwd();
+            user =  userMapper.selectByPhone(userDTO.getPhone());
+            if (!user.getPassword().equals(pwd)){
+                return Result.error(401,MsgConstant.PasswordError);
+            }
+        }
+        // 验证码登录
+        else{
+            Integer code = (Integer) redisTemplate.opsForHash().get(RedisConstant.PhoneCode+userDTO.getPhone(),"code");
+            if (!(code.toString().equals(userDTO.getIdentifyCode()))){
+                return Result.error(401,MsgConstant.CodeError);
+            }
+        }
+        // 如果是验证码登录，获取用户信息
+        if (user.getId() == null){
+            user =  userMapper.selectByPhone(userDTO.getPhone());
+        }
+        // 生成token
+        HashMap<String,Object> claims = new HashMap<>();
+        claims.put(JwtClaimsConstant.userId,user.getId());
+        claims.put(JwtClaimsConstant.userName, user.getName());
+        String token = JwtUtil.createJWT(jwtProperties.getUserSecretKey(), jwtProperties.getUserTTL(),claims);
+        return Result.success(token);
     }
 
     //检测电话号是否注册过其他账号
