@@ -6,4 +6,5 @@ public class MsgConstant {
     public static final String phoneRepeatError = "该手机号已绑定其他账号";
     public static final String PasswordError    = "密码错误";
     public static final String CodeError        = "验证码错误";
+    public static final String UserNotExistError= "该用户不存在";
 }

@@ -20,6 +20,8 @@ import java.util.HashMap;
 public class JwtTokenInterceptor implements HandlerInterceptor {
 
     @Autowired
+    public JwtUtil jwtUtil;
+    @Autowired
     public JwtProperties jwtProperties;
 
     /**
@@ -41,7 +43,7 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
         //校验令牌
         try {
             log.info("jwt校验：{}", token);
-            DecodedJWT decodedJWT = JwtUtil.parse(jwtProperties.getUserSecretKey(), token);
+            DecodedJWT decodedJWT = jwtUtil.parse(token);
             Integer userId = decodedJWT.getClaim(JwtClaimsConstant.userId).asInt();
             String userName = decodedJWT.getClaim(JwtClaimsConstant.userName).asString();
             HashMap<String, Object> map = new HashMap<>();

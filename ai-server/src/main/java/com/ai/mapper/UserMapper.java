@@ -17,4 +17,11 @@ public interface UserMapper {
      * @param user 新用户信息
      */
     void insert(User user);
+
+    /**
+     * 根据用户名查用户
+     * @param userName 用户名
+     * @return         对应的用户
+     */
+    User selectByUserName(String userName);
 }

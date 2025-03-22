@@ -5,6 +5,9 @@
     <select id="selectByPhone" resultType="com.ai.entity.User">
         SELECT * FROM bk_user WHERE phone = #{phone}
     </select>
+    <select id="selectByUserName" resultType="com.ai.entity.User">
+        SELECT * FROM bk_user WHERE `name` = #{userName}
+    </select>
     <insert id="insert" parameterType="com.ai.entity.User" useGeneratedKeys="true" keyProperty="id">
         insert into bk_user (name, phone, avatar_url)
         values (#{name},#{phone},#{avatarUrl})

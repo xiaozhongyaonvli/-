@@ -28,6 +28,13 @@ public class Result<T> implements Serializable {
         return result;
     }
 
+    public static <T> Result<T> success(T data, String msg){
+        Result<T> result = new Result<>();
+        result.setData(data);
+        result.setMsg(msg);
+        return result;
+    }
+
     public static <T> Result<T> error(Integer code){
         Result<T> result = new Result<>();
         result.setCode(code);
@@ -37,6 +44,14 @@ public class Result<T> implements Serializable {
     public static <T> Result<T> error(Integer code, String msg){
         Result<T> result = new Result<>();
         result.setCode(code);
+        result.setMsg(msg);
+        return result;
+    }
+
+    public static <T> Result<T> error(Integer code, String msg, T data){
+        Result<T> result = new Result<>();
+        result.setCode(code);
+        result.setData(data);
         result.setMsg(msg);
         return result;
     }

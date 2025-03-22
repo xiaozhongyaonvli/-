@@ -30,6 +30,8 @@
         <jjwt>0.9.1</jjwt>
         <jaxb-api>2.3.1</jaxb-api>
         <poi>3.16</poi>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -98,6 +100,28 @@
                 <version>3.4.0</version>
             </dependency>
 
+            <!--阿里云-短信服务-->
+            <!-- https://mvnrepository.com/artifact/com.aliyun/dysmsapi20170525 -->
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>dysmsapi20170525</artifactId>
+                <version>2.0.24</version>
+            </dependency>
+
+            <!--阿里云短信发送服务依赖包-->
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>aliyun-java-sdk-core</artifactId>
+                <version>4.5.16</version>
+            </dependency>
+
+            <!-- 阿里云 Tea SDK（核心库） -->
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>tea-openapi</artifactId>
+                <version>0.3.7</version>
+            </dependency>
+
 
             <dependency>
                 <groupId>com.aliyun.oss</groupId>
@@ -122,6 +146,25 @@
                 <artifactId>poi-ooxml</artifactId>
                 <version>${poi}</version>
             </dependency>-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-configuration-processor</artifactId>
+                <version>2.7.3</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>  <!-- 降级到兼容 Java 8 的版本 -->
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

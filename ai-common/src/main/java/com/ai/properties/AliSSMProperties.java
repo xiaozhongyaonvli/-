@@ -6,11 +6,12 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "ali.oss")
-public class AliOSSProperties {
+@ConfigurationProperties(prefix = "ali.ssm")
+public class AliSSMProperties {
     private String accessKeyId;
     private String accessKeySecret;
-    private String bucketName;
     private String endPoint;
-    private String region;
+    private String regionId;
+    private String signName;
+    private String templateCode;
 }

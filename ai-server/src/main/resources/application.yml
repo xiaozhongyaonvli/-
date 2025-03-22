@@ -20,12 +20,20 @@ spring:
       max-file-size: ${ai.servlet.multipart.max-file-size}
       max-request-size: ${ai.servlet.multipart.max-request-size}
 
-ali-oss:
-  access-key-secret: ${ai.ali-oss.access-key-secret}
-  access-key-id: ${ai.ali-oss.access-key-id}
-  bucket-name: ${ai.ali-oss.bucket-name}
-  end-point: ${ai.ali-oss.end-point}
-  region: ${ai.ali-oss.region}
+ali:
+  oss:
+    access-key-id: ${ai.ali.oss.access-key-id}
+    access-key-secret: ${ai.ali.oss.access-key-secret}
+    bucket-name: ${ai.ali.oss.bucket-name}
+    end-point: ${ai.ali.oss.end-point}
+    region: ${ai.ali.oss.region}
+  ssm:
+    access-key-id: ${ai.ali.ssm.access-key-id}
+    access-key-secret: ${ai.ali.ssm.access-key-secret}
+    end-point: ${ai.ali.ssm.end-point}
+    regionId: ${ai.ali.ssm.regionId}
+    signName: ${ai.ali.ssm.signName}
+    templateCode: ${ai.ali.ssm.templateCode}
 mybatis:
   #mapper配置文件
   mapper-locations: classpath:mapper/*.xml

@@ -4,10 +4,13 @@ import com.ai.constant.JwtClaimsConstant;
 import com.ai.constant.MsgConstant;
 import com.ai.context.BaseContext;
 import com.ai.dto.UserDTO;
+import com.ai.dto.UserLoginPhoneDTO;
+import com.ai.dto.UserLoginPwdDTO;
 import com.ai.properties.ImageProperties;
 import com.ai.result.Result;
 import com.ai.service.UserService;
 import com.ai.utils.AliOSSUtil;
+import com.ai.vo.UserLoginVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +28,7 @@ import java.util.regex.Pattern;
 @Slf4j
 @Api(tags = "用户相关接口")
 @RequestMapping("/user")
+@CrossOrigin(origins = "http://localhost:5173")  // 允许前端访问
 public class UserController {
 
     @Autowired
@@ -54,7 +58,7 @@ public class UserController {
      */
     @PostMapping("/register")
     @ApiOperation("注册接口")
-    public Result register(@RequestBody UserDTO userDTO){
+    public Result<UserLoginVO> register(@RequestBody UserDTO userDTO){
         boolean flag = checkPhone(userDTO.getPhone());
         if (!flag) return Result.error(400, MsgConstant.phoneFormatError);
         return userService.register(userDTO);
@@ -65,7 +69,7 @@ public class UserController {
      * @param phone 手机号码0000
      * @return      400手机号格式错误
      */
-    @GetMapping("/register/code")
+    @GetMapping("/code")
     @ApiOperation("发送验证码接口")
     public Result sendVerifyCode(@RequestParam String phone){
         boolean flag = checkPhone(phone);
@@ -74,16 +78,27 @@ public class UserController {
     }
 
     /**
-     * 用户登录
-     * @param userDTO (手机号码+验证码  ||   手机号 + 密码)
-     * @return        200成功返回token
+     * 用户登录(手机号+验证码)
+     * @param userLoginPhoneDTO (手机号码+验证码  ||   手机号 + 密码)
+     * @return                  200成功返回token
      */
-    @PostMapping("/login")
-    @ApiOperation("用户登录接口")
-    public Result login(@RequestBody UserDTO userDTO){
-        boolean flag = checkPhone(userDTO.getPhone());
+    @PostMapping("/login/phone")
+    @ApiOperation("用户手机登录接口")
+    public Result<UserLoginVO> loginWithPhone(@RequestBody UserLoginPhoneDTO userLoginPhoneDTO){
+        boolean flag = checkPhone(userLoginPhoneDTO.getPhone());
         if (!flag) return Result.error(400, MsgConstant.phoneFormatError);
-        return userService.login(userDTO);
+        return userService.loginWithPhone(userLoginPhoneDTO);
+    }
+
+    /**
+     * 用户登录(用户名+密码)
+     * @param userLoginPwdDTO (用户名+密码)
+     * @return                200成功返回token
+     */
+    @PostMapping("/login/name")
+    @ApiOperation("用户名称密码登录接口")
+    public Result<UserLoginVO> loginWithNameAndPwd(@RequestBody UserLoginPwdDTO userLoginPwdDTO){
+        return userService.loginWithPwd(userLoginPwdDTO);
     }
 
     @PutMapping("/image")

@@ -5,8 +5,8 @@ import lombok.Data;
 @Data
 public class UserDTO {
 
-    public String name;
+    public String userName;
     public String phone;
-    public String pwd;
+    public String password;
     public String identifyCode;  //验证码
 }

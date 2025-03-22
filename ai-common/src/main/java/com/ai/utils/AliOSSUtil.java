@@ -1,9 +1,8 @@
 package com.ai.utils;
 
-import com.ai.properties.AliOSSProperties;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import com.aliyun.oss.ClientException;
 import com.aliyun.oss.OSS;
@@ -13,12 +12,15 @@ import com.aliyun.oss.OSSException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-@Component
+@Data
 @Slf4j
+@AllArgsConstructor
 public class AliOSSUtil {
 
-    @Autowired
-    private AliOSSProperties aliOSSProperties;
+    private String endpoint;
+    private String accessKeyId;
+    private String accessKeySecret;
+    private String bucketName;
 
     /**
      * 上传文件
@@ -28,13 +30,13 @@ public class AliOSSUtil {
      */
     public String UpLoad(MultipartFile file, String fileName){
         //文件访问路径规则 https://BucketName.Endpoint/ObjectName
-        String fileUrl = String.format("https://{%s}.{%s}.{%s}",aliOSSProperties.getBucketName(),aliOSSProperties.getEndPoint(),fileName);
+        String fileUrl = String.format("https://{%s}.{%s}.{%s}",bucketName,endpoint,fileName);
         // 创建OSSClient实例。
-        OSS ossClient = new OSSClientBuilder().build(aliOSSProperties.getEndPoint(), aliOSSProperties.getAccessKeyId(), aliOSSProperties.getAccessKeySecret());
+        OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
         try {
             // 创建PutObject请求。
             byte[] fileBytes = file.getBytes();
-            ossClient.putObject(aliOSSProperties.getBucketName(), fileName, new ByteArrayInputStream(fileBytes));
+            ossClient.putObject(bucketName, fileName, new ByteArrayInputStream(fileBytes));
             log.info("文件上传到:{}", fileUrl);
 
             return fileUrl;
