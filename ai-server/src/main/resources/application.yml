@@ -34,6 +34,8 @@ ali:
     regionId: ${ai.ali.ssm.regionId}
     signName: ${ai.ali.ssm.signName}
     templateCode: ${ai.ali.ssm.templateCode}
+  model:
+    api_key: ${ai.ali.model.api_key}
 mybatis:
   #mapper配置文件
   mapper-locations: classpath:mapper/*.xml

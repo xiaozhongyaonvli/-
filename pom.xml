@@ -151,6 +151,51 @@
                 <artifactId>spring-boot-configuration-processor</artifactId>
                 <version>2.7.3</version>
             </dependency>
+
+            <!-- 阿里云灵积模型API客户端 (DashScope SDK) -->
+            <!-- 注意：需排除旧版本 okhttp 依赖以避免冲突 -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>dashscope-sdk-java</artifactId>
+                <exclusions>
+                    <!-- 排除旧版 okhttp（SDK内置版本可能较低） -->
+                    <exclusion>
+                        <groupId>com.squareup.okhttp3</groupId>
+                        <artifactId>okhttp</artifactId>
+                    </exclusion>
+                    <!-- 排除旧版 SSE 支持库 -->
+                    <exclusion>
+                        <groupId>com.squareup.okhttp3</groupId>
+                        <artifactId>okhttp-sse</artifactId>
+                    </exclusion>
+                </exclusions>
+                <version>2.18.2</version>
+            </dependency>
+
+            <!-- OkHttp 核心库 (显式指定新版) -->
+            <!-- 用于处理HTTP请求/响应，提供连接池、缓存等特性 -->
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>4.11.0</version>
+            </dependency>
+
+            <!-- OkHttp 服务器推送事件支持 (Streaming/SSE) -->
+            <!-- 用于处理长连接、实时流式响应场景 -->
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp-sse</artifactId>
+                <version>4.11.0</version>
+            </dependency>
+
+            <!-- OkHttp 日志拦截器 -->
+            <!-- 用于调试时记录HTTP请求/响应日志（生产环境建议关闭） -->
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>logging-interceptor</artifactId>
+                <version>4.11.0</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <build>
@@ -166,5 +211,17 @@
             </plugin>
         </plugins>
     </build>
+    <repositories>
+        <repository>
+            <id>aliyun-public</id>
+            <url>https://maven.aliyun.com/repository/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
 </project>
