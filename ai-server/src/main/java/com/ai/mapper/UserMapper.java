@@ -3,6 +3,9 @@ package com.ai.mapper;
 import com.ai.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 
+/**
+ * 对应user表
+ */
 @Mapper
 public interface UserMapper {
     /**
@@ -24,4 +27,10 @@ public interface UserMapper {
      * @return         对应的用户
      */
     User selectByUserName(String userName);
+
+    /**
+     * 更新用户数据
+     * @param user 用户新数据
+     */
+    void update(User user);
 }

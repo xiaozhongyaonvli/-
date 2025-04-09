@@ -9,7 +9,7 @@ import lombok.Data;
 public class UserLoginPwdDTO {
 
     /**用户名**/
-    public String userName;
+    public String username;
 
     /**用户密码**/
     private String  password;

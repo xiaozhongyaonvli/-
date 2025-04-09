@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 
+/**
+ * 记录用户基本信息
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

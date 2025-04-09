@@ -16,27 +16,40 @@ public class AliModelUtil {
 
     private AliModelProperties aliModelProperties;
 
-    public String getDiagnosis(String illnessDesc) throws NoApiKeyException, InputRequiredException {
-        Generation gen = new Generation();
+    /**
+     * 工具方法，输入ai的提示词和user的信息 返回ai回答
+     * @param  sysContent             ai的提示content
+     * @param  userContent            用户传入的描述
+     * @throws NoApiKeyException      apikey失效
+     * @throws InputRequiredException 未提供输入异常
+     * @return 返回ai回答
+     */
+    public String chatAi(String sysContent,String userContent) throws NoApiKeyException, InputRequiredException {
+        Generation gen = new Generation(); // 创建一个 Generation 实例用于生成请求
 
+        // 创建系统消息，指示 AI 的角色和任务
         Message systemMsg = Message.builder()
                 .role(Role.SYSTEM.getValue())
-                .content("你是一位经验丰富的医生，请根据患者的描述进行科室分类建议。你只能回答'皮肤科'或'肝脏科'，不要提供任何其他解释或描述。")
+                .content(sysContent)
                 .build();
 
+        // 创建用户消息，包含用户的描述
         Message userMsg = Message.builder()
                 .role(Role.USER.getValue())
-                .content(illnessDesc)
+                .content(userContent) // 使用传入的描述
                 .build();
 
+        // 构建请求参数，包含 API 密钥、模型名称、消息列表等
         GenerationParam param = GenerationParam.builder()
-                .apiKey(aliModelProperties.getApiKey())
-                .model("deepseek-r1")
-                .messages(Arrays.asList(systemMsg,userMsg))
-                .resultFormat(GenerationParam.ResultFormat.MESSAGE)
+                .apiKey(aliModelProperties.getApiKey()) // 从配置中获取API密钥
+                .model("deepseek-r1") // 使用的模型名称
+                .messages(Arrays.asList(systemMsg, userMsg)) // 传入的消息列表，包括系统和用户的消息
+                .resultFormat(GenerationParam.ResultFormat.MESSAGE) // 设置返回结果的格式为消息
                 .build();
-
+        // 调用 Generation 的接口，获取结果
         GenerationResult result = gen.call(param);
+        // 返回结果中的第一条选择的内容
         return result.getOutput().getChoices().get(0).getMessage().getContent();
     }
+
 }

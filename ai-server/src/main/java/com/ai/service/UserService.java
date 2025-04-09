@@ -1,10 +1,17 @@
 package com.ai.service;
+import com.ai.dto.ILLNESSMessageDTO;
 import com.ai.dto.UserDTO;
 import com.ai.dto.UserLoginPhoneDTO;
 import com.ai.dto.UserLoginPwdDTO;
 import com.ai.result.Result;
+import com.ai.vo.MessageVO;
 import com.ai.vo.UserLoginVO;
+import com.alibaba.dashscope.exception.InputRequiredException;
+import com.alibaba.dashscope.exception.NoApiKeyException;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 public interface UserService {
@@ -42,4 +49,33 @@ public interface UserService {
      * @return                200成功返回token
      */
     Result<UserLoginVO> loginWithPwd(UserLoginPwdDTO userLoginPwdDTO);
+
+    /**
+     * 与ai进行聊天
+     * @param illnessMessageDTO 用户消息
+     * @return                  返回ai响应信息
+     */
+    String chat(ILLNESSMessageDTO illnessMessageDTO) throws NoApiKeyException, InputRequiredException;
+
+    /**
+     * 获取用户历史聊天标题列表
+     * @param userId 用户id
+     * @return       返回聊天标题列表
+     */
+    List<String> historyRecordTitleList(Integer userId);
+
+    /**
+     * 更新用户头像
+     * @param file 用户上传头像图片文件
+     * @return     返回OSS地址
+     */
+    String updateAvatar(MultipartFile file) throws IOException;
+
+    /**
+     * 根据用户上传患处图片或者X光获取细分科室
+     * @param image 患处图片或者X光
+     * @param desc  用户初步描述
+     * @return      返回对话标题
+     */
+    String aiDepartmentSortByImage(MultipartFile image, String desc);
 }

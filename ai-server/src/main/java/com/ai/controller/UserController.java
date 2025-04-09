@@ -1,8 +1,8 @@
 package com.ai.controller;
 
-import com.ai.constant.JwtClaimsConstant;
 import com.ai.constant.MsgConstant;
 import com.ai.context.BaseContext;
+import com.ai.dto.ILLNESSMessageDTO;
 import com.ai.dto.UserDTO;
 import com.ai.dto.UserLoginPhoneDTO;
 import com.ai.dto.UserLoginPwdDTO;
@@ -11,6 +11,8 @@ import com.ai.result.Result;
 import com.ai.service.UserService;
 import com.ai.utils.AliOSSUtil;
 import com.ai.vo.UserLoginVO;
+import com.alibaba.dashscope.exception.InputRequiredException;
+import com.alibaba.dashscope.exception.NoApiKeyException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -18,10 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Map;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.regex.Pattern;
 
 @RestController
@@ -101,23 +102,70 @@ public class UserController {
         return userService.loginWithPwd(userLoginPwdDTO);
     }
 
-    @PutMapping("/image")
+    /**
+     * 用户更改头像
+     * @param file 头像图片文件
+     * @return     返回图片OSS地址
+     * @throws IOException 抛出IO异常
+     */
+    @PutMapping("/image/avatar")
     @ApiOperation("用户更改头像接口")
-    public Result putImage(@RequestParam MultipartFile file) throws IOException {
-        // 获取当前用户id
-        Integer userId = (Integer) BaseContext.get().get(JwtClaimsConstant.userId);
-        // 生成文件名
-        String originalFilename = file.getOriginalFilename();
-        int lastedIndexOf = originalFilename.lastIndexOf('.');
-        String extern =  originalFilename.substring(lastedIndexOf);
-        String fileName = userId + UUID.randomUUID().toString() + extern;
-        // 生成本地保存地址，并本地保存
-        String filePath = imageProperties.getLocalPath()+fileName;
-        file.transferTo(new File(filePath));
-        //上传阿里云oss
-        String ossImagePath =  aliOSSUtil.UpLoad(file, fileName);
-        return Result.success(ossImagePath);
+    public Result<String> putAvatar(@RequestParam MultipartFile file) throws IOException {
+       return Result.success(userService.updateAvatar(file));
     }
+
+    /**
+     * 用户加载历史聊天标题列表
+     * @return 返回聊天标题列表
+     */
+    @GetMapping("/ai/chat/historyRecord/list")
+    @ApiOperation("用户加载历史聊天记录列表接口")
+    public Result<List<String>> aiHistoryRecordTitleList(){
+        // 获取用户id
+        Integer userId = Integer.valueOf((String) BaseContext.get().get("USER_ID"));
+        // 查询用户聊天记录标题列表
+        List<String> recordTitleList = userService.historyRecordTitleList(userId);
+        // 返回标题列表
+        return Result.success(recordTitleList);
+    }
+
+    /**
+     * 用户与ai寻医聊天
+     * @param illnessMessageDTO 用户病情描述
+     * @return              返回ai信息
+     */
+    @PostMapping("/ai/chat/illnessResolution")
+    @ApiOperation("用户与ai聊天接口")
+    public Result<String> aiChat(ILLNESSMessageDTO illnessMessageDTO) throws NoApiKeyException, InputRequiredException {
+        // 获取当前时间
+        LocalDateTime now = LocalDateTime.now();
+        // 如果用户时间在当前时间一分钟前或者在当前时间后，怀疑时间戳有误，报错返回
+        if (illnessMessageDTO.getTimeStamp().isBefore(now.minusMinutes(1)) || illnessMessageDTO.getTimeStamp().isAfter(now)){
+            return Result.error(400, MsgConstant.UserTimeError,null);
+        }
+        // 返回ai消息
+        return Result.success(userService.chat(illnessMessageDTO));
+    }
+
+    /**
+     * 用户上传具体图片，初步描述，细分科室
+     *
+     * @param image 图片
+     * @param desc  初步描述
+     */
+    @PostMapping("/ai/chat/start")
+    @ApiOperation("科室细分图片与初步描述接口")
+    public Result<String> aiDepartmentSortByImage(@RequestParam MultipartFile image, @RequestParam String desc) {
+        // 如果用户输入病情描述为空报错返回
+        if (desc == null){
+            return Result.error(400,MsgConstant.IllnessDescNullError);
+        }
+        // 获取对话标题，初始化对话
+        String departmentSubdivision = userService.aiDepartmentSortByImage(image,desc);
+        return Result.success(departmentSubdivision);
+    }
+//
+//    public
 
     //检查手机号码格式
     private boolean checkPhone(String phone) {
@@ -129,4 +177,6 @@ public class UserController {
         }
         return true;
     }
+
+
 }

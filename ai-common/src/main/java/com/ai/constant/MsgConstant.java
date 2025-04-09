@@ -7,4 +7,6 @@ public class MsgConstant {
     public static final String PasswordError    = "密码错误";
     public static final String CodeError        = "验证码错误";
     public static final String UserNotExistError= "该用户不存在";
+    public static final String UserTimeError    = "用户时间错误";
+    public static final String IllnessDescNullError  = "病情描述不可为空";
 }
