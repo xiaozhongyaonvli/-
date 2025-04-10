@@ -1,6 +1,8 @@
 package com.ai.result;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -14,6 +16,7 @@ public class Result<T> implements Serializable {
     private Integer code;//成功返回200，失败返回其他code
     private T data;      //成功返回数据
     private String msg;  //失败返回信息
+
 
     public static <T> Result<T> success(){
         Result<T> result = new Result<>();

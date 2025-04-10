@@ -1,8 +1,22 @@
 package com.ai.utils;
 
+import cn.hutool.json.JSONUtil;
 import com.ai.properties.AliModelProperties;
+import com.ai.result.Result;
+import com.alibaba.dashscope.utils.JsonUtils;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.alibaba.dashscope.aigc.generation.Generation;
 import com.alibaba.dashscope.aigc.generation.GenerationParam;
 import com.alibaba.dashscope.aigc.generation.GenerationResult;
@@ -10,6 +24,24 @@ import com.alibaba.dashscope.common.Message;
 import com.alibaba.dashscope.common.Role;
 import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
+import okhttp3.FormBody;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.sse.EventSource;
+import okhttp3.sse.EventSourceListener;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.web.client.RequestCallback;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
+import javax.servlet.http.HttpServletResponse;
+
+import static javax.swing.text.html.parser.DTDConstants.MODEL;
 
 @AllArgsConstructor
 public class AliModelUtil {
@@ -51,5 +83,55 @@ public class AliModelUtil {
         // 返回结果中的第一条选择的内容
         return result.getOutput().getChoices().get(0).getMessage().getContent();
     }
+
+
+
+    //流式编程方法
+    public static Result<StreamingResponseBody> streamData(@NotNull String content,HttpServletResponse response) {
+
+
+        Map<String, String> map = new HashMap<>();
+        map.put("content","空");
+        //将content的内容整除后向上取整
+        double len = Math.ceil(content.length()*1.0/10);
+        StreamingResponseBody responseBody = outputStream -> {
+            try (PrintWriter writer = new PrintWriter(outputStream)) {
+                String content1 = content;
+                for (int i = 1; i <= len; i++) {
+
+                    if(content1.length()>=10){
+                        map.put("content", content.substring(0,10));
+                    }else{
+                        map.put("content", content);
+                    }
+
+//                    writer.println(JsonUtils.to);
+//                    writer.flush();
+                    // 模拟一些延迟
+                    writer.print(JSONUtil.toJsonStr(map));
+                    writer.flush();
+                    if(content1.length()>10){
+                        content1 = content1.substring(10);
+                    }else{
+                        break;
+                    }
+                    Thread.sleep(500);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        };
+
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.TEXT_PLAIN);
+
+//        return Result.ok()
+//                .headers(headers)
+//                .body(responseBody);
+
+        response.setHeader("Content-Type", "text/plain");
+        return Result.success(responseBody);
+    }
+
 
 }

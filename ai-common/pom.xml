@@ -23,8 +23,17 @@
             <artifactId>spring-boot-starter-json</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.8.16</version>
         </dependency>
         <!--支持配置属性类，yml文件中可以提示配置项-->
         <dependency>
@@ -78,6 +87,10 @@
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>logging-interceptor</artifactId>
             <version>4.11.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
         </dependency>
     </dependencies>
 </project>

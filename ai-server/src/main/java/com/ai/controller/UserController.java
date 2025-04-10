@@ -19,7 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -136,7 +138,7 @@ public class UserController {
      */
     @PostMapping("/ai/chat/illnessResolution")
     @ApiOperation("用户与ai聊天接口")
-    public Result<String> aiChat(ILLNESSMessageDTO illnessMessageDTO) throws NoApiKeyException, InputRequiredException {
+    public Result<StreamingResponseBody> aiChat(ILLNESSMessageDTO illnessMessageDTO, HttpServletResponse response) throws NoApiKeyException, InputRequiredException {
         // 获取当前时间
         LocalDateTime now = LocalDateTime.now();
         // 如果用户时间在当前时间一分钟前或者在当前时间后，怀疑时间戳有误，报错返回
@@ -144,7 +146,7 @@ public class UserController {
             return Result.error(400, MsgConstant.UserTimeError,null);
         }
         // 返回ai消息
-        return Result.success(userService.chat(illnessMessageDTO));
+        return userService.chat(illnessMessageDTO, response);
     }
 
     /**
@@ -167,6 +169,7 @@ public class UserController {
 //
 //    public
 
+
     //检查手机号码格式
     private boolean checkPhone(String phone) {
         String regex = "^1\\d{10}$";
@@ -177,6 +180,8 @@ public class UserController {
         }
         return true;
     }
+
+
 
 
 }

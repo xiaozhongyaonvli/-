@@ -33,7 +33,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -220,7 +222,7 @@ public class UserServiceImpl implements UserService {
      * @return                  返回ai响应信息
      */
     @Override
-    public String chat(ILLNESSMessageDTO illnessMessageDTO) throws NoApiKeyException, InputRequiredException {
+    public Result<StreamingResponseBody> chat(ILLNESSMessageDTO illnessMessageDTO, HttpServletResponse response) throws NoApiKeyException, InputRequiredException {
         // ai提示词
         String systemContent = "你是一位经验丰富的"+illnessMessageDTO.getDepartment()+"医生，请进行与患者沟通交流";
         // 获取ai响应结果
@@ -246,7 +248,8 @@ public class UserServiceImpl implements UserService {
         messageVOList.add(userMessageVO);
         messageVOList.add(aiMessageVO);
         redisTemplate.opsForHash().put(key,hashKey,messageVOList);
-        return aiAnswer;
+        return AliModelUtil.streamData(aiAnswer,response);
+
     }
 
     /**

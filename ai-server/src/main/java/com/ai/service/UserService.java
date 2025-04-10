@@ -9,7 +9,9 @@ import com.ai.vo.UserLoginVO;
 import com.alibaba.dashscope.exception.InputRequiredException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +57,7 @@ public interface UserService {
      * @param illnessMessageDTO 用户消息
      * @return                  返回ai响应信息
      */
-    String chat(ILLNESSMessageDTO illnessMessageDTO) throws NoApiKeyException, InputRequiredException;
+    Result<StreamingResponseBody> chat(ILLNESSMessageDTO illnessMessageDTO, HttpServletResponse response) throws NoApiKeyException, InputRequiredException;
 
     /**
      * 获取用户历史聊天标题列表
